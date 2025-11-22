@@ -510,9 +510,7 @@ class ResendConfigScreen(ft.Column):
             # Batching
             self.config.enable_batching = self.enable_batching_checkbox.value
             try:
-                self.config.batch_max_messages = int(
-                    self.batch_max_field.value or "7"
-                )
+                self.config.batch_max_messages = int(self.batch_max_field.value or "7")
                 self.config.batch_time_window_minutes = int(
                     self.batch_time_window_field.value or "10"
                 )

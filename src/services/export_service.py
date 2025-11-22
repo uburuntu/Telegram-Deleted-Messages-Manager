@@ -141,7 +141,9 @@ class ExportService:
 
             # Prepare metadata file using Path
             metadata_file = output_dir / "messages_metadata.json"
-            messages_dict: dict[int, dict] = {}  # message_id -> message_data for O(1) lookups
+            messages_dict: dict[
+                int, dict
+            ] = {}  # message_id -> message_data for O(1) lookups
 
             # PHASE 1: Fast metadata extraction
             # Iterate through admin log and collect all messages with metadata
@@ -167,7 +169,9 @@ class ExportService:
                     logger.debug("No more events found")
                     break
 
-                logger.info(f"Processing {len(events)} deleted message events (metadata)")
+                logger.info(
+                    f"Processing {len(events)} deleted message events (metadata)"
+                )
 
                 # Extract metadata from each deleted message (fast, no media download)
                 for event in events:
@@ -330,7 +334,9 @@ class ExportService:
 
                         # Update metadata with media file path (O(1) dict lookup)
                         if message_id in messages_dict:
-                            messages_dict[message_id]["media_file_path"] = str(downloaded_path)
+                            messages_dict[message_id]["media_file_path"] = str(
+                                downloaded_path
+                            )
                     else:
                         logger.warning(
                             f"Downloaded file is empty or missing for message {message_id}: {downloaded_path}"
@@ -469,9 +475,7 @@ class ExportService:
 
         except Exception as e:
             # Re-raise to let retry wrapper handle it
-            logger.debug(
-                f"Error extracting metadata for message {message_id}: {e}"
-            )
+            logger.debug(f"Error extracting metadata for message {message_id}: {e}")
             raise
 
     async def _extract_message_data(

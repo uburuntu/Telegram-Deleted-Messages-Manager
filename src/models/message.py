@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, computed_field
 class DeletedMessage(BaseModel):
     """Represents a deleted Telegram message."""
 
-    model_config = ConfigDict(ser_json_timedelta='iso8601')
+    model_config = ConfigDict(ser_json_timedelta="iso8601")
 
     message_id: int
     chat_id: int

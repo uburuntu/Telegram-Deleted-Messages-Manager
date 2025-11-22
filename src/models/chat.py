@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, computed_field
 class ChatInfo(BaseModel):
     """Information about a Telegram chat."""
 
-    model_config = ConfigDict(ser_json_timedelta='iso8601')
+    model_config = ConfigDict(ser_json_timedelta="iso8601")
 
     chat_id: int
     title: str

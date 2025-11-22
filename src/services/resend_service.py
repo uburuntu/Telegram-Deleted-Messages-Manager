@@ -383,7 +383,9 @@ class ResendService:
             if message.reply_to_top_id:
                 reply_link = f"https://t.me/c/{message.chat_id}/{message.reply_to_top_id}/{message.reply_to_msg_id}"
             else:
-                reply_link = f"https://t.me/c/{message.chat_id}/{message.reply_to_msg_id}"
+                reply_link = (
+                    f"https://t.me/c/{message.chat_id}/{message.reply_to_msg_id}"
+                )
 
             if config.use_hidden_reply_links:
                 # HTML hidden link
@@ -630,7 +632,9 @@ class ResendService:
                     if retry_count < MAX_SEND_RETRIES:
                         await asyncio.sleep(e.seconds)
                     else:
-                        logger.error("Max retries reached for batch after rate limiting")
+                        logger.error(
+                            "Max retries reached for batch after rate limiting"
+                        )
                         self._current_progress.failed_messages += len(batch)
                         break
 
