@@ -191,10 +191,26 @@ jobs:
           - **Linux**: \`TelegramDeletedMessagesManager-linux\`
 
           ### Installation
-          1. Download the executable for your platform
-          2. Make it executable (Unix/macOS): \`chmod +x TelegramDeletedMessagesManager-*\`
-          3. Run the application
-          4. Enter your [Telegram API credentials](https://my.telegram.org/auth) on first launch
+
+          **Windows:**
+          1. Download \`TelegramDeletedMessagesManager-windows.exe\`
+          2. Run the executable
+
+          **macOS:**
+          1. Download \`TelegramDeletedMessagesManager-macos\`
+          2. Remove quarantine: \`xattr -cr TelegramDeletedMessagesManager-macos\`
+          3. Make executable: \`chmod +x TelegramDeletedMessagesManager-macos\`
+          4. Run: \`./TelegramDeletedMessagesManager-macos\`
+
+          > **Note**: macOS blocks unsigned apps. Use \`xattr -cr\` to bypass Gatekeeper, or right-click → Open → Click \"Open\".
+
+          **Linux:**
+          1. Download \`TelegramDeletedMessagesManager-linux\`
+          2. Make executable: \`chmod +x TelegramDeletedMessagesManager-linux\`
+          3. Run: \`./TelegramDeletedMessagesManager-linux\`
+
+          **All platforms:**
+          - Enter your [Telegram API credentials](https://my.telegram.org/auth) on first launch
 
           ### What's New
           See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.

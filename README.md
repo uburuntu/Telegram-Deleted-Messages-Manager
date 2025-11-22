@@ -50,8 +50,23 @@ Export and re-send deleted Telegram messages with a modern cross-platform GUI. �
 ### Pre-built Binary
 
 1. Download for your platform
-2. Run the executable (macOS/Linux: `chmod +x TelegramDeletedMessagesManager-*`)
-3. Enter [Telegram API credentials](https://my.telegram.org/auth) on first launch
+2. **macOS users**: See [macOS Security](#macos-security) below
+3. Run the executable (macOS/Linux: `chmod +x TelegramDeletedMessagesManager-*`)
+4. Enter [Telegram API credentials](https://my.telegram.org/auth) on first launch
+
+#### macOS Security
+
+macOS will block unsigned apps with "damaged" error. To bypass Gatekeeper:
+
+```bash
+# Remove quarantine attribute
+xattr -cr TelegramDeletedMessagesManager-macos
+
+# Then run normally
+./TelegramDeletedMessagesManager-macos
+```
+
+**Alternative**: Right-click → Open → Click "Open" to allow once.
 
 ### From Source
 
