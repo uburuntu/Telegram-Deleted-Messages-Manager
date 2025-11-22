@@ -35,12 +35,12 @@ def build_executable():
     # Run PyInstaller
     try:
         subprocess.run(cmd, check=True, cwd=project_root)
-        print("\n✓ Build successful!")
+        print("\n[OK] Build successful!")
         print(
             f"Executable location: {project_root / 'dist' / 'TelegramDeletedMessagesManager'}"
         )
     except subprocess.CalledProcessError as e:
-        print(f"\n✗ Build failed: {e}")
+        print(f"\n[ERROR] Build failed: {e}")
         sys.exit(1)
 
 
@@ -50,9 +50,9 @@ def build_with_flet():
 
     try:
         subprocess.run(["flet", "build", "macos"], check=True)
-        print("\n✓ Flet build successful!")
+        print("\n[OK] Flet build successful!")
     except subprocess.CalledProcessError as e:
-        print(f"\n✗ Flet build failed: {e}")
+        print(f"\n[ERROR] Flet build failed: {e}")
         print("Note: Flet build command may not be available in all environments.")
         print("Falling back to PyInstaller...")
         build_executable()
