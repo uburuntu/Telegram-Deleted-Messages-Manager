@@ -1,4 +1,4 @@
-.PHONY: help install install-dev run test test-coverage clean build lint format
+.PHONY: help install install-dev run test test-coverage clean build lint format test-workflows test-ci test-build-workflow
 
 help:
 	@echo "Available commands:"
@@ -8,9 +8,12 @@ help:
 	@echo "  make test         - Run tests"
 	@echo "  make test-coverage - Run tests with coverage report"
 	@echo "  make clean        - Clean build artifacts"
-	@echo "  make build        - Build standalone executable"
-	@echo "  make lint         - Run linters (if configured)"
-	@echo "  make format       - Format code (if configured)"
+	@echo "  make build            - Build standalone executable"
+	@echo "  make lint             - Run linters"
+	@echo "  make format           - Format code"
+	@echo "  make test-workflows   - List all GitHub Actions workflows (requires act)"
+	@echo "  make test-ci          - Test CI workflow locally (requires act)"
+	@echo "  make test-build-workflow - Test build workflow locally (requires act)"
 
 install:
 	uv sync
@@ -45,3 +48,17 @@ lint:
 
 format:
 	uv run ruff format src/ tests/
+
+# GitHub Actions local testing
+test-workflows:
+	@echo "Testing GitHub Actions workflows locally with act..."
+	@command -v act >/dev/null 2>&1 || { echo "Error: act is not installed. Install with: brew install act"; exit 1; }
+	act -l
+
+test-ci:
+	@echo "Running CI workflow locally..."
+	act push -j lint-and-format -j test
+
+test-build-workflow:
+	@echo "Testing build workflow locally..."
+	act -j build-test

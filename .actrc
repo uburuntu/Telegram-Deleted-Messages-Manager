@@ -1,0 +1,14 @@
+# Act configuration for local GitHub Actions testing
+# https://github.com/nektos/act
+
+# Use medium-sized Ubuntu image (good balance of speed and compatibility)
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+
+# Bind the current directory
+--bind
+
+# Use Docker socket for builds that need Docker
+--container-daemon-socket -
+
+# Verbose output
+--verbose
