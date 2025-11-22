@@ -1,0 +1,57 @@
+[project]
+name = "telegram-deleted-messages-manager"
+version = "0.1.0"
+description = "A Flet-based UI application for exporting and re-sending deleted Telegram messages"
+readme = "README.md"
+requires-python = ">=3.14"
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+license = { text = "MIT" }
+keywords = ["telegram", "flet", "ui", "messages", "export"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Communications :: Chat",
+]
+
+dependencies = [
+    "flet>=0.28.3",
+    "pydantic>=2.12.4",
+    "ruff>=0.14.6",
+    "telethon>=1.42.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.1",
+    "pytest-asyncio>=1.3.0",
+    "pytest-mock>=3.15.1",
+]
+build = [
+    "pyinstaller>=6.16.0",
+]
+
+[project.scripts]
+telegram-manager = "src.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+minversion = "9.0"
+addopts = "-ra -q --asyncio-mode=auto"
+testpaths = ["tests"]
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.pyinstaller]
+name = "TelegramDeletedMessagesManager"
+onefile = true
+windowed = true
+icon = "assets/icon.ico"
