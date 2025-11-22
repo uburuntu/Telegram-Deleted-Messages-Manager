@@ -94,6 +94,7 @@ jobs:
 
       - name: Verify build artifact exists (Windows)
         if: runner.os == 'Windows'
+        shell: pwsh
         run: |
-          dir dist\
-          if not exist dist\TelegramDeletedMessagesManager.exe exit 1
+          Get-ChildItem dist\
+          if (-not (Test-Path dist\TelegramDeletedMessagesManager.exe)) { exit 1 }
