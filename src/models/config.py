@@ -6,11 +6,21 @@ import json
 from pathlib import Path
 from typing import Literal, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class TelegramConfig(BaseModel):
     """Telegram API configuration."""
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "app_id": 12345,
+                "app_hash": "0123456789abcdef0123456789abcdef",
+                "session_name": "telegram_session",
+            }
+        }
+    )
 
     app_id: Optional[int] = None
     app_hash: Optional[str] = None
@@ -19,17 +29,6 @@ class TelegramConfig(BaseModel):
     def is_valid(self) -> bool:
         """Check if configuration has required fields."""
         return self.app_id is not None and self.app_hash is not None
-
-    class Config:
-        """Pydantic configuration."""
-
-        json_schema_extra = {
-            "example": {
-                "app_id": 12345,
-                "app_hash": "0123456789abcdef0123456789abcdef",
-                "session_name": "telegram_session",
-            }
-        }
 
 
 class ExportConfig(BaseModel):

@@ -2,14 +2,16 @@
 Message data models.
 """
 
-from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+from datetime import datetime, timedelta, timezone
+from typing import Optional
 
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, ConfigDict, computed_field
 
 
 class DeletedMessage(BaseModel):
     """Represents a deleted Telegram message."""
+
+    model_config = ConfigDict(ser_json_timedelta='iso8601')
 
     message_id: int
     chat_id: int
@@ -24,15 +26,6 @@ class DeletedMessage(BaseModel):
     reply_to_msg_id: Optional[int] = None
     reply_to_top_id: Optional[int] = None
     quote_text: Optional[str] = None
-    raw_data: Dict[str, Any] = Field(default_factory=dict)
-
-    @computed_field
-    @property
-    def formatted_date(self) -> str:
-        """Get formatted date string."""
-        if self.date:
-            return self.date.strftime("%Y %b %d, %H:%M")
-        return "Unknown date"
 
     def get_formatted_date(self, timezone_offset_hours: int = 0) -> str:
         """
@@ -46,8 +39,6 @@ class DeletedMessage(BaseModel):
         """
         if not self.date:
             return "Unknown date"
-
-        from datetime import timedelta
 
         adjusted_date = self.date + timedelta(hours=timezone_offset_hours)
         return adjusted_date.strftime("%Y %b %d, %H:%M")
@@ -79,11 +70,6 @@ class DeletedMessage(BaseModel):
             else self.text or ""
         )
         return f"Message {self.message_id} from {self.sender_display}{media_info}: {text_preview}"
-
-    class Config:
-        """Pydantic configuration."""
-
-        json_encoders = {datetime: lambda v: v.isoformat() if v else None}
 
 
 class ExportProgress(BaseModel):

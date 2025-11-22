@@ -5,11 +5,13 @@ Chat data models.
 from datetime import datetime
 from typing import Literal, Optional
 
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 
 class ChatInfo(BaseModel):
     """Information about a Telegram chat."""
+
+    model_config = ConfigDict(ser_json_timedelta='iso8601')
 
     chat_id: int
     title: str
@@ -43,8 +45,3 @@ class ChatInfo(BaseModel):
     def __str__(self) -> str:
         """String representation."""
         return f"{self.display_name} [{self.chat_type_display}]"
-
-    class Config:
-        """Pydantic configuration."""
-
-        json_encoders = {datetime: lambda v: v.isoformat() if v else None}

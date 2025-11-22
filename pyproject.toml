@@ -4,9 +4,6 @@ version = "0.1.0"
 description = "A Flet-based UI application for exporting and re-sending deleted Telegram messages"
 readme = "README.md"
 requires-python = ">=3.14"
-authors = [
-    { name = "Your Name", email = "your.email@example.com" }
-]
 license = { text = "MIT" }
 keywords = ["telegram", "flet", "ui", "messages", "export"]
 classifiers = [

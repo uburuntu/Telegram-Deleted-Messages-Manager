@@ -41,7 +41,7 @@ build:
 	uv run python build.py
 
 lint:
-	@echo "Linting not configured. Install ruff or pylint if needed."
+	uv run ruff check src/ tests/
 
 format:
-	@echo "Formatting not configured. Install black or ruff if needed."
+	uv run ruff format src/ tests/

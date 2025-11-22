@@ -5,7 +5,7 @@ Service for re-sending exported messages to Telegram.
 import asyncio
 import html
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Awaitable, Callable, List, Optional
 
@@ -434,8 +434,6 @@ class ResendService:
         if not config.enable_batching:
             # Return each message as its own batch
             return [[msg] for msg in messages]
-
-        from datetime import timedelta
 
         batches = []
         current_batch = []

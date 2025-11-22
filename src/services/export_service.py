@@ -537,5 +537,4 @@ class ExportService:
             reply_to_msg_id=reply_to_msg_id,
             reply_to_top_id=reply_to_top_id,
             quote_text=quote_text,
-            raw_data={},  # Removed complex serialization - not needed
         )
