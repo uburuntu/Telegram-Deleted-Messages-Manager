@@ -11,65 +11,14 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
-  create-release:
-    name: Create GitHub Release
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-      version: ${{ steps.get_version.outputs.version }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Get version from tag or input
-        id: get_version
-        run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-          else
-            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: Release ${{ steps.get_version.outputs.version }}
-          body: |
-            ## Telegram Deleted Messages Manager ${{ steps.get_version.outputs.version }}
-
-            ### Features
-            - Export deleted messages from Telegram chats (admin access required)
-            - Re-send exported messages to any chat
-            - Configurable message headers and timezone adjustment
-            - Smart message batching
-            - Cross-platform GUI built with Flet
-
-            ### Downloads
-            - **Windows**: `TelegramDeletedMessagesManager-windows.exe`
-            - **macOS**: `TelegramDeletedMessagesManager-macos` (Apple Silicon & Intel)
-            - **Linux**: `TelegramDeletedMessagesManager-linux`
-
-            ### Installation
-            1. Download the executable for your platform
-            2. Make it executable (Unix/macOS): `chmod +x TelegramDeletedMessagesManager-*`
-            3. Run the application
-            4. Enter your Telegram API credentials on first launch
-
-            ### Changelog
-            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
-          draft: false
-          prerelease: false
-
   build-windows:
     name: Build for Windows
     runs-on: windows-latest
-    needs: create-release
 
     steps:
       - name: Checkout code
@@ -90,23 +39,19 @@ jobs:
         run: uv run python build.py
 
       - name: Rename executable
+        shell: pwsh
         run: |
-          move dist\TelegramDeletedMessagesManager.exe dist\TelegramDeletedMessagesManager-windows.exe
+          Move-Item dist\TelegramDeletedMessagesManager.exe dist\TelegramDeletedMessagesManager-windows.exe
 
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/TelegramDeletedMessagesManager-windows.exe
-          asset_name: TelegramDeletedMessagesManager-windows.exe
-          asset_content_type: application/octet-stream
+          name: windows-build
+          path: dist/TelegramDeletedMessagesManager-windows.exe
 
   build-macos:
     name: Build for macOS
     runs-on: macos-latest
-    needs: create-release
 
     steps:
       - name: Checkout code
@@ -126,12 +71,12 @@ jobs:
       - name: Build with PyInstaller
         run: uv run python build.py
 
-      - name: Rename executable
+      - name: Rename and prepare executables
         run: |
           mv dist/TelegramDeletedMessagesManager dist/TelegramDeletedMessagesManager-macos
           chmod +x dist/TelegramDeletedMessagesManager-macos
 
-      - name: Create macOS app bundle (optional)
+      - name: Create macOS app bundle
         run: |
           mkdir -p "dist/Telegram Deleted Messages Manager.app/Contents/MacOS"
           mkdir -p "dist/Telegram Deleted Messages Manager.app/Contents/Resources"
@@ -149,7 +94,7 @@ jobs:
               <key>CFBundleName</key>
               <string>Telegram Deleted Messages Manager</string>
               <key>CFBundleVersion</key>
-              <string>${{ needs.create-release.outputs.version }}</string>
+              <string>1.0.0</string>
               <key>CFBundlePackageType</key>
               <string>APPL</string>
           </dict>
@@ -158,32 +103,18 @@ jobs:
 
           cd dist
           zip -r TelegramDeletedMessagesManager-macos.app.zip "Telegram Deleted Messages Manager.app"
-          cd ..
 
-      - name: Upload Release Asset (Binary)
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/TelegramDeletedMessagesManager-macos
-          asset_name: TelegramDeletedMessagesManager-macos
-          asset_content_type: application/octet-stream
-
-      - name: Upload Release Asset (App Bundle)
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/TelegramDeletedMessagesManager-macos.app.zip
-          asset_name: TelegramDeletedMessagesManager-macos.app.zip
-          asset_content_type: application/zip
+          name: macos-build
+          path: |
+            dist/TelegramDeletedMessagesManager-macos
+            dist/TelegramDeletedMessagesManager-macos.app.zip
 
   build-linux:
     name: Build for Linux
     runs-on: ubuntu-latest
-    needs: create-release
 
     steps:
       - name: Checkout code
@@ -208,12 +139,69 @@ jobs:
           mv dist/TelegramDeletedMessagesManager dist/TelegramDeletedMessagesManager-linux
           chmod +x dist/TelegramDeletedMessagesManager-linux
 
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-build
+          path: dist/TelegramDeletedMessagesManager-linux
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build-windows, build-macos, build-linux]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/TelegramDeletedMessagesManager-linux
-          asset_name: TelegramDeletedMessagesManager-linux
-          asset_content_type: application/octet-stream
+        run: |
+          gh release create ${{ steps.get_version.outputs.version }} \
+            --title "Release ${{ steps.get_version.outputs.version }}" \
+            --notes "## Telegram Deleted Messages Manager ${{ steps.get_version.outputs.version }}
+
+          ### Features
+          - 📥 Export deleted messages from Telegram chats (admin access required)
+          - 📤 Re-send exported messages to any chat with customizable headers
+          - ⚙️ Smart message batching for consecutive short messages
+          - 🌍 Timezone adjustment for message timestamps
+          - 🔗 Hidden reply links using HTML anchors
+          - ⚡ FloodWait error handling with automatic retry
+          - 🖥️ Cross-platform Flet UI
+
+          ### Downloads
+          - **Windows**: \`TelegramDeletedMessagesManager-windows.exe\`
+          - **macOS**: \`TelegramDeletedMessagesManager-macos\` (binary) or \`.app.zip\` (app bundle)
+          - **Linux**: \`TelegramDeletedMessagesManager-linux\`
+
+          ### Installation
+          1. Download the executable for your platform
+          2. Make it executable (Unix/macOS): \`chmod +x TelegramDeletedMessagesManager-*\`
+          3. Run the application
+          4. Enter your [Telegram API credentials](https://my.telegram.org/auth) on first launch
+
+          ### What's New
+          See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
+
+          ---
+          🤖 Generated with [Claude Code](https://claude.com/claude-code)" \
+            artifacts/windows-build/TelegramDeletedMessagesManager-windows.exe \
+            artifacts/macos-build/TelegramDeletedMessagesManager-macos \
+            artifacts/macos-build/TelegramDeletedMessagesManager-macos.app.zip \
+            artifacts/linux-build/TelegramDeletedMessagesManager-linux
