@@ -58,3 +58,7 @@ test_exports/
 # OS
 .DS_Store
 Thumbs.db
+
+# Act (GitHub Actions local testing)
+.secrets
+.env.act
