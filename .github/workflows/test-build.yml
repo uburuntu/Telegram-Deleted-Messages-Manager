@@ -1,0 +1,51 @@
+name: Test Builds
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday
+
+jobs:
+  test-builds:
+    name: Test build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.14
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Build with PyInstaller
+        run: uv run python build.py
+
+      - name: List build artifacts (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          ls -lh dist/
+          file dist/TelegramDeletedMessagesManager
+
+      - name: List build artifacts (Windows)
+        if: runner.os == 'Windows'
+        run: dir dist\
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.os }}
+          path: |
+            dist/TelegramDeletedMessagesManager*
+          retention-days: 7
