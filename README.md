@@ -4,7 +4,28 @@
 [![Release](https://github.com/uburuntu/Telegram-Deleted-Messages-Manager/actions/workflows/cd.yml/badge.svg)](https://github.com/uburuntu/Telegram-Deleted-Messages-Manager/actions/workflows/cd.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Export and re-send deleted Telegram messages with a modern cross-platform GUI.
+Export and re-send deleted Telegram messages with a modern cross-platform GUI. 📥 Archive important messages before they disappear, then 📤 resend them anywhere you need!
+
+## Screenshots
+
+<div align="center">
+
+### Main Menu
+![Main Menu](.github/screenshots/01-main-menu.png)
+
+### 📥 Export Chat Selection
+![Export Chat Selection](.github/screenshots/02-export-chat-selection.png)
+
+### 📤 Resend Configuration
+![Resend Configuration](.github/screenshots/03-resend-configuration.png)
+
+### ⚙️ Resend Options
+![Resend Options](.github/screenshots/04-resend-options.png)
+
+### Smart Batching
+![Smart Batching](.github/screenshots/05-resend-batching.png)
+
+</div>
 
 ## Download
 
@@ -16,13 +37,15 @@ Export and re-send deleted Telegram messages with a modern cross-platform GUI.
 
 ## Features
 
-- Export deleted messages from Telegram chats (requires admin access)
-- Re-send messages to any chat with customizable headers
-- Smart batching, timezone adjustment, hidden reply links
-- Parallel downloads, FloodWait handling
-- Cross-platform Flet UI
+- 📥 **Export deleted messages** from Telegram chats (requires admin access)
+- 📤 **Re-send messages** to any chat with customizable headers
+- ⚙️ **Smart batching** - merge consecutive short messages automatically
+- 🌍 **Timezone adjustment** - display messages in your local time
+- 🔗 **Hidden reply links** - clean formatting with clickable references
+- ⚡ **Parallel downloads** with automatic FloodWait handling
+- 🖥️ **Cross-platform** - works on Windows, macOS, and Linux
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Pre-built Binary
 

@@ -15,7 +15,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "flet>=0.28.3",
+    "flet[all]>=0.28.3",
     "pydantic>=2.12.4",
     "ruff>=0.14.6",
     "telethon>=1.42.0",
